@@ -30,7 +30,8 @@ from runtime_state import runtime_metrics
 load_dotenv()
 
 _groq = Groq(api_key=os.getenv("GROQ_API_KEY"))
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+# Use high-capacity model for complex agent reasoning
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 MAX_AGENT_STEPS = 3
 
 # ── Tool Definitions (Groq function calling format) ──────────

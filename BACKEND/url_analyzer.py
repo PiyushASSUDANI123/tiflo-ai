@@ -24,7 +24,7 @@ from runtime_state import runtime_metrics
 load_dotenv()
 
 _groq = Groq(api_key=os.getenv("GROQ_API_KEY"))
-_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 
 HEADERS = {
     "User-Agent": (

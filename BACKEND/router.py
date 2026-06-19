@@ -9,7 +9,8 @@ from runtime_state import router_cache, runtime_metrics
 
 load_dotenv()
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-GROQ_MODEL = "llama-3.1-8b-instant"
+# Using the most capable model for highly accurate semantic routing
+GROQ_MODEL = "llama-3.3-70b-versatile"
 
 URL_PATTERN = re.compile(r'https?://[^\s<>"\')\]`]+', re.IGNORECASE)
 MATH_EXPRESSION_PATTERN = re.compile(r"^[\d\s\+\-\*/%\(\)\.\^,]+$")

@@ -14,7 +14,8 @@ from url_analyzer import fetch_url_content
 
 load_dotenv()
 _groq = Groq(api_key=os.getenv("GROQ_API_KEY"))
-_GROQ_MODEL = "llama-3.1-8b-instant"
+# Using 70B for deeper intelligence in parallel tasks
+_GROQ_MODEL = "llama-3.3-70b-versatile"
 
 
 def _normalize_query(text: str) -> str:
