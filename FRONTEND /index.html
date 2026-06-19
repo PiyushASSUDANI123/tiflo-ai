@@ -5698,6 +5698,11 @@ async function buildAuthHeaders(baseHeaders = {}) {
                         const token = trimmedLine.slice(6);
                         if (token === '[DONE]') break;
 
+                        if (token.startsWith('__ACCOUNT__:')) {
+                            // Can update local credit counters here if needed
+                            continue;
+                        }
+
                         if (token.startsWith('__STATUS__:')) {
                             if (firstChunk) {
                                 const parentMsg = aiContentEl.closest('.message');
