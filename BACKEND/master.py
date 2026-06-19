@@ -902,7 +902,7 @@ HOW TO RESPOND TO IMPOSTERS:
         messages.insert(-1, tone_hint)
 
         stream = groq_client.chat.completions.create(
-            model=GROQ_MODEL,
+            model=FAST_GROQ_MODEL,
             messages=messages,
             temperature=chat_temperature,
             stream=True
