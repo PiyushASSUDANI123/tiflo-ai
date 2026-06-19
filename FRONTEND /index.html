@@ -2268,63 +2268,71 @@
             margin-top: 1px;
         }
 
-        /* ── Source Citation Cards ────────────────────────────── */
+        /* ── Premium Source Citation Cards ────────────────────────────── */
         .source-cards-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
         }
         .source-card {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 7px 11px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
+            gap: 10px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             text-decoration: none;
-            color: #d1d5db;
-            font-size: 0.72rem;
+            color: #e5e7eb;
+            font-size: 0.78rem;
             font-weight: 500;
-            transition: background 0.18s, border-color 0.18s, transform 0.15s;
-            max-width: 220px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            max-width: 260px;
             overflow: hidden;
             cursor: pointer;
-            backdrop-filter: blur(6px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .source-card:hover {
-            background: rgba(99, 102, 241, 0.12);
-            border-color: rgba(99, 102, 241, 0.35);
-            color: #a78bfa;
-            transform: translateY(-1px);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: translateY(-3px) scale(1.02);
         }
         .source-card-num {
             flex-shrink: 0;
-            width: 18px;
-            height: 18px;
-            border-radius: 5px;
-            background: rgba(99, 102, 241, 0.2);
-            color: #a78bfa;
-            font-size: 0.62rem;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: #ffffff;
+            font-size: 0.65rem;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         .source-card-favicon {
-            width: 14px;
-            height: 14px;
-            border-radius: 3px;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
             flex-shrink: 0;
             object-fit: contain;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
         }
         .source-card-title {
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            letter-spacing: 0.02em;
         }
 
         /* ── Follow-up Question Chips ────────────────────────── */

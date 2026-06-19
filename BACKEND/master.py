@@ -915,12 +915,16 @@ HOW TO RESPOND TO IMPOSTERS:
     elif intent == 'WEB_SEARCH':
         import json as _json
         search_query = decision.get('search_query', user_input)
-        yield "data: __STATUS__:🔍 Searching the web...\n\n"
-        search_result = await ask_live_ai_parallel(user_input, search_query)
-        yield "data: __STATUS__:📝 Generating answer...\n\n"
+        
+        search_result = {}
+        async for chunk in ask_live_ai_parallel(user_input, search_query):
+            if "status" in chunk:
+                yield f"data: __STATUS__:🔍 {chunk['status']}\n\n"
+            else:
+                search_result = chunk
 
-        ai_text  = search_result.get("text", "") if isinstance(search_result, dict) else search_result
-        sources  = search_result.get("sources", []) if isinstance(search_result, dict) else []
+        ai_text  = search_result.get("text", "")
+        sources  = search_result.get("sources", [])
         full_response = ai_text
 
         yield "data: " + ai_text.replace('\n', '\\n') + "\n\n"
@@ -943,8 +947,13 @@ HOW TO RESPOND TO IMPOSTERS:
     elif intent == 'TEACH':
         topic = extract_topic(user_input)
         yield f"data: __STATUS__:🌐 Researching {topic}...\n\n"
-        _teach_result = await ask_live_ai_parallel(user_input, f"core concepts of {topic}")
-        web_context = _teach_result.get("text", "") if isinstance(_teach_result, dict) else _teach_result
+        _teach_result = {}
+        async for chunk in ask_live_ai_parallel(user_input, f"core concepts of {topic}"):
+            if "status" in chunk:
+                yield f"data: __STATUS__:🌐 {chunk['status']}\n\n"
+            else:
+                _teach_result = chunk
+        web_context = _teach_result.get("text", "")
         yield f"data: __STATUS__:📚 Building Elite Lesson...\n\n"
         async for chunk in stream_guru_response(topic, user_input, conversation_history, web_context=web_context):
             yield chunk

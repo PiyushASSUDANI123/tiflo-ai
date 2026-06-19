@@ -442,7 +442,8 @@ INTENT DEFINITIONS — Read carefully before classifying:
    - This is the MOST COMMON intent. Use it for ANY message that does not clearly fit the others below.
 
 2. WEB_SEARCH:
-   - ONLY for real-time / live information that changes daily: breaking news, live scores, today's stock prices, current events.
+   - For real-time / live information that changes daily: breaking news, live scores, today's stock prices, current events.
+   - CRITICAL: Use WEB_SEARCH for ANY factual question about specific people, celebrities, places, events, or things that require highly accurate or historical facts. Do NOT hallucinate facts about people.
 
 3. AGENT:
    - ONLY for explicit tool use: executing code, calculating a math expression, checking live crypto/stock price, real-time weather.

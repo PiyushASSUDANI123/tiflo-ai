@@ -141,9 +141,12 @@ async def ask_live_ai_parallel(question: str, search_query: str):
     cached = search_cache.get(cache_key)
     if cached:
         runtime_metrics.record_cache_hit("search")
-        return cached
+        yield {"status": "Retrieving cached research..."}
+        yield cached
+        return
     runtime_metrics.record_cache_miss("search")
 
+    yield {"status": f"Searching Google for '{search_query}'..."}
     search_results = await asyncio.to_thread(
         search_internet,
         search_query,
@@ -151,7 +154,8 @@ async def ask_live_ai_parallel(question: str, search_query: str):
         6,
     )
     if not search_results:
-        return {"text": "❌ Could not retrieve live web results right now.", "sources": []}
+        yield {"text": "❌ Could not retrieve live web results right now.", "sources": []}
+        return
 
     snippet_context = extract_ddgs_snippets(search_results)
     print(f"⚡ Snippets ready in {round(time.time() - start_time, 2)}s")
@@ -159,6 +163,10 @@ async def ask_live_ai_parallel(question: str, search_query: str):
     scraped_context = ""
     urls = [_result_url(item) for item in search_results if _result_url(item)]
     if urls:
+        for idx, url in enumerate(urls[:5], start=1):
+            domain = urlparse(url).netloc.replace('www.', '')
+            yield {"status": f"Reading {domain}..."}
+
         tasks = [asyncio.create_task(fetch_and_package(url, idx)) for idx, url in enumerate(urls[:5], start=1)]
         done, pending = await asyncio.wait(tasks, timeout=4.5)
         for task in pending:
@@ -171,12 +179,14 @@ async def ask_live_ai_parallel(question: str, search_query: str):
             if result:
                 scraped_context += result + "\n\n"
 
+    yield {"status": "Synthesizing evidence..."}
     combined_context = scraped_context.strip()
     if snippet_context:
         combined_context += ("\n\n--- Search Snippets ---\n" if combined_context else "") + snippet_context
 
     if not combined_context.strip():
-        return {"text": "I couldn't retrieve enough live context for this query.", "sources": []}
+        yield {"text": "I couldn't retrieve enough live context for this query.", "sources": []}
+        return
 
     print(f"⏱️ Context ready in {round(time.time() - start_time, 2)}s ({len(combined_context)} chars)")
 
@@ -235,10 +245,10 @@ Answer:"""
         payload = {"text": ai_text, "sources": sources}
         search_cache.set(cache_key, payload)
         print(f"✅ Real-time response ready in {round(time.time() - start_time, 2)}s")
-        return payload
+        yield payload
     except Exception as e:
         print(f"⚠️ LLM Error: {e}")
-        return {"text": "There was an internal error communicating with Groq.", "sources": []}
+        yield {"text": "There was an internal error communicating with Groq.", "sources": []}
 
 
 async def generate_followups(question: str, answer: str) -> list[str]:
@@ -278,6 +288,9 @@ Rules:
 
 
 if __name__ == "__main__":
-    q = "What is the weather today in Mumbai?"
-    query = "Mumbai weather today current temperature"
-    print(asyncio.run(ask_live_ai_parallel(q, query)))
+    async def run_test():
+        q = "What is the weather today in Mumbai?"
+        query = "Mumbai weather today current temperature"
+        async for chunk in ask_live_ai_parallel(q, query):
+            print(chunk)
+    asyncio.run(run_test())
