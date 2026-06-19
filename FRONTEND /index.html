@@ -5511,6 +5511,13 @@ async function buildAuthHeaders(baseHeaders = {}) {
             }
         }
 
+        function autoReplyYes() {
+            const input = document.getElementById('user-input');
+            input.value = "Yes, please continue.";
+            // Since the user might be using the center input on empty state, we fallback to user-input which is the main one.
+            sendMessage();
+        }
+
         // Messaging — GPT-style Streaming
         async function sendMessage() {
             const localVersion = ++streamVersion;
@@ -5825,6 +5832,9 @@ async function buildAuthHeaders(baseHeaders = {}) {
 
             if (role === 'ai') {
                 actions.innerHTML = `
+                    <button class="action-icon-btn" style="border:1px solid rgba(99,102,241,0.3); border-radius:6px; color: #818cf8; padding: 2px 8px; margin-right: 6px; font-weight: 500;" title="Yes, please continue" onclick="autoReplyYes()">
+                        Yes
+                    </button>
                     <button class="action-icon-btn thumbs-up-btn" title="Good" onclick="submitFeedback(this, 'good')">
                         <i data-lucide="thumbs-up" style="width:16px;height:16px;"></i>
                     </button>
