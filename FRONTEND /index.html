@@ -275,7 +275,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.01em;
         }
 
         body {
@@ -2335,41 +2336,42 @@
             letter-spacing: 0.02em;
         }
 
-        /* ── Follow-up Question Chips ────────────────────────── */
+        /* ── Premium Follow-up Chips ────────────────────────── */
         .followup-chips-row {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: flex-end;
             gap: 8px;
-            margin-top: 12px;
+            margin-top: 16px;
+            width: 100%;
         }
         .followup-chips-label {
-            width: 100%;
-            font-size: 0.68rem;
-            color: rgba(255,255,255,0.35);
-            font-weight: 500;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            margin-bottom: 2px;
+            display: none;
         }
         .followup-chip {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 7px 13px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(167, 139, 250, 0.05));
+            border: 1px solid rgba(167, 139, 250, 0.25);
             border-radius: 20px;
-            color: #c4b5fd;
-            font-size: 0.78rem;
+            color: #d8b4fe;
+            font-size: 0.82rem;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.18s, border-color 0.18s, transform 0.15s;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
             user-select: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
         .followup-chip:hover {
-            background: rgba(99, 102, 241, 0.15);
-            border-color: rgba(167, 139, 250, 0.4);
-            transform: translateY(-1px);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(167, 139, 250, 0.15));
+            border-color: rgba(167, 139, 250, 0.5);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(167, 139, 250, 0.15);
         }
         .followup-chip:active {
             transform: translateY(0);
@@ -2378,6 +2380,66 @@
         /* Pulsing status dot */
         .status-dot {
             animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot-think {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #a78bfa;
+            border-radius: 50%;
+            margin-left: 6px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* ── Premium Thought Block ── */
+        .thought-block {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .thought-block[open] {
+            border-color: rgba(167, 139, 250, 0.3);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .thought-summary {
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a78bfa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            list-style: none; /* remove default arrow */
+        }
+
+        .thought-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .thought-summary:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: #d8b4fe;
+        }
+
+        .thought-content {
+            padding: 12px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            font-family: monospace;
         }
 
         @keyframes pulse {
@@ -3368,10 +3430,12 @@
                     </div>
                     <div class="brand-title">Tiflo AI</div>
                     <h1 class="empty-title">Ask anything. Flip on Deep mode when you want broader search, citations, and more context.</h1>
-                    <p class="welcome-description">Strategy, code, research, explanations, PDFs, images, voice input, and sharper follow-up discovery. Start with a direct question or grab one of these high-utility prompts.</p>
-
-
-
+                </div>
+                
+                <div style="margin-top: 30px; text-align: center;">
+                    <button onclick="toggleModal('why-us-modal')" style="background:none; border:1px solid rgba(255,255,255,0.1); color:var(--clr-text-secondary); font-size:0.75rem; padding:6px 14px; border-radius:20px; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:6px;">
+                        <i data-lucide="sparkles" style="width:14px;height:14px;"></i> Why Tiflo AI?
+                    </button>
                 </div>
                 
                 <script>
@@ -4199,8 +4263,21 @@ async function buildAuthHeaders(baseHeaders = {}) {
         function renderMarkdown(content) {
             if (!content) return '';
 
+            // Intercept <thought> blocks
+            let processedContent = content;
+            processedContent = processedContent.replace(/<thought>([\s\S]*?)(?:<\/thought>|$)/gi, (match, thoughtText) => {
+                const isClosed = match.toLowerCase().includes('</thought>');
+                const pulsingStatus = isClosed ? '' : '<span class="status-dot-think"></span>';
+                const summaryText = isClosed ? 'View Thinking' : `Thinking ${pulsingStatus}`;
+                // We wrap it in our premium details block. The text inside is parsed as markdown later if we don't do it now.
+                // Wait, marked.parse will escape raw HTML if we are not careful, but marked v4 allows HTML if not sanitized.
+                // We will parse the thoughtText here and return raw HTML block.
+                const parsedThought = marked.parse(thoughtText);
+                return `<details class="thought-block" ${isClosed ? '' : 'open'}><summary class="thought-summary"><i data-lucide="brain"></i> ${summaryText}</summary><div class="thought-content">${parsedThought}</div></details>\n`;
+            });
+
             // 1. Main Markdown Render
-            let html = sanitizeHtml(marked.parse(content));
+            let html = sanitizeHtml(marked.parse(processedContent));
             
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
@@ -7132,6 +7209,56 @@ function renderFollowupChips(questions, contentEl) {
                         <i data-lucide="copy" style="width:18px;height:18px;"></i> Copy Full Share Text
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why Us Modal -->
+    <div class="glass-modal-overlay" id="why-us-modal" onclick="closeModalOnBg(event, 'why-us-modal')">
+        <div class="glass-modal-card">
+            <div class="glass-modal-header">
+                <h3>Why Tiflo AI?</h3>
+                <button class="glass-modal-close" onclick="toggleModal('why-us-modal')">
+                    <i data-lucide="x" style="width:16px;height:16px;"></i>
+                </button>
+            </div>
+            <div class="glass-modal-body">
+                <p><strong>Tiflo AI isn't just another wrapper.</strong> It is a custom-engineered intelligence layer built for raw speed, deep reasoning, and elite aesthetics.</p>
+                <ul>
+                    <li><strong>🔥 Uncensored Engine:</strong> Flip the switch to bypass safety filters. No lecturing. No refusal. Just raw, fearless answers.</li>
+                    <li><strong>🌐 Deep Live Search:</strong> Ask about a celebrity or event, and watch Tiflo stream live URLs as it reads them in real-time.</li>
+                    <li><strong>🧠 View Thinking:</strong> Like DeepSeek Reasoner, Tiflo exposes its internal logic. See exactly how it formulates answers before delivering them.</li>
+                    <li><strong>🎓 Backbencher Guru:</strong> A specialized mode that explains complex thermodynamics or coding concepts in relatable, desi analogies.</li>
+                    <li><strong>💻 Elite UI Generation:</strong> Need a pricing table or dashboard? Tiflo generates premium, copy-paste Tailwind HTML blocks instantly.</li>
+                </ul>
+            </div>
+            <div class="glass-modal-footer">
+                <button class="glass-btn" onclick="toggleModal('why-us-modal')">Awesome</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="glass-modal-overlay" id="help-modal" onclick="closeModalOnBg(event, 'help-modal')">
+        <div class="glass-modal-card">
+            <div class="glass-modal-header">
+                <h3>Tiflo AI Modes Guide</h3>
+                <button class="glass-modal-close" onclick="toggleModal('help-modal')">
+                    <i data-lucide="x" style="width:16px;height:16px;"></i>
+                </button>
+            </div>
+            <div class="glass-modal-body">
+                <p>Tiflo AI uses an intelligent routing system. Depending on your question, it activates specific modes:</p>
+                <ul>
+                    <li><strong>1. Web Search (Deep Search)</strong>: Triggered for real-time events, celebrities, or facts. Tiflo reads live websites and shows you its sources dynamically.</li>
+                    <li><strong>2. Uncensored Mode</strong>: Turn on the toggle switch at the top. This bypasses all safety filters for raw, bold, unrestricted brainstorming.</li>
+                    <li><strong>3. UI Generator</strong>: Ask for a "Pricing Table" or "Landing Page UI". Tiflo writes premium Tailwind code.</li>
+                    <li><strong>4. Teach Mode</strong>: Ask "Explain Newton's Laws" and Tiflo switches to a Desi Backbencher persona, using relatable examples instead of textbook jargon.</li>
+                    <li><strong>5. Chit Chat</strong>: For normal coding, debugging, or brainstorming, delivering ultra-concise, Claude-like responses.</li>
+                </ul>
+            </div>
+            <div class="glass-modal-footer">
+                <button class="glass-btn" onclick="toggleModal('help-modal')">Got it</button>
             </div>
         </div>
     </div>
