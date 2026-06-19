@@ -1,0 +1,40 @@
+# robots.txt — Tiflo AI
+# Owner: Piyush Assudani | Assudani Group
+# https://tiflo.in/
+
+# Allow all standard search engine crawlers
+User-agent: *
+Allow: /
+
+# ── AI / LLM Crawlers ─────────────────────────────────────────────────────────
+# Let Google's AI overview crawler index us
+User-agent: Google-Extended
+Allow: /
+
+# Let OpenAI's crawler index us (appears in ChatGPT search)
+User-agent: GPTBot
+Allow: /
+
+# Let Bing Copilot / Microsoft crawler index us
+User-agent: Bingbot
+Allow: /
+
+# Let Perplexity AI index us
+User-agent: PerplexityBot
+Allow: /
+
+# Let Anthropic Claude index us
+User-agent: ClaudeBot
+Allow: /
+
+# Let Meta AI index us
+User-agent: FacebookBot
+Allow: /
+
+# Let Common Crawl (used by many LLMs for training data) index us
+User-agent: CCBot
+Allow: /
+
+# Disallow nothing — Tiflo AI is fully public
+# Sitemap location
+Sitemap: https://tiflo.in/sitemap.xml

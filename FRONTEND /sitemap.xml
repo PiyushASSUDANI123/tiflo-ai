@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+    <!-- Homepage / Main Chat Interface -->
+    <url>
+        <loc>https://tiflo.in/</loc>
+        <lastmod>2025-05-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="en" href="https://tiflo.in/"/>
+        <xhtml:link rel="alternate" hreflang="hi" href="https://tiflo.in/"/>
+        <image:image>
+            <image:loc>https://tiflo.in/image.png</image:loc>
+            <image:title>Tiflo AI — Uncensored Dual-Engine Intelligence by Piyush Assudani</image:title>
+            <image:caption>Tiflo AI is a premium uncensored AI chat assistant built by Piyush Assudani, Founder of Assudani Group.</image:caption>
+        </image:image>
+    </url>
+
+    <!-- Terms & Conditions -->
+    <url>
+        <loc>https://tiflo.in/terms.html</loc>
+        <lastmod>2025-05-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <!-- Privacy Policy -->
+    <url>
+        <loc>https://tiflo.in/privacy.html</loc>
+        <lastmod>2025-05-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+</urlset>

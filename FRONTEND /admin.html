@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiflo AI — Administrative Core Dashboard</title>
+    
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Clerk Auth SDK -->
+    <script async src="https://clerk.tiflo.in/npm/@clerk/clerk-js@4/dist/clerk.browser.js" 
+            data-clerk-publishable-key="pk_live_Y2xlcmsudGlmbG8uaW4k"
+            onload="startClerk()"></script>
+            
+    <style>
+        :root {
+            --bg-base: #030712;
+            --bg-surface: rgba(17, 24, 39, 0.6);
+            --bg-surface-hover: rgba(31, 41, 55, 0.8);
+            --accent: #a855f7;
+            --accent-glow: rgba(168, 85, 247, 0.4);
+            --accent-success: #10b981;
+            --accent-danger: #ef4444;
+            --clr-border: rgba(255, 255, 255, 0.08);
+            --clr-text: #f3f4f6;
+            --clr-text-muted: #9ca3af;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--clr-text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* ── Loading state overlay ── */
+        #auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-base);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity 0.5s ease;
+        }
+
+        .auth-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.05);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #denied-card {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 32px;
+            border-radius: 20px;
+            max-width: 480px;
+            text-align: center;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        /* ── Main Layout ── */
+        .admin-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--clr-border);
+            padding-bottom: 24px;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 30%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .role-badge {
+            background: linear-gradient(90deg, rgba(168,85,247,0.15), rgba(99,102,241,0.15));
+            border: 1px solid rgba(168,85,247,0.3);
+            color: #d8b4fe;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-action {
+            background: var(--bg-surface);
+            border: 1px solid var(--clr-border);
+            color: var(--clr-text);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: var(--bg-surface-hover);
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        /* ── Bento KPI Section ── */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--clr-border);
+            padding: 24px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .kpi-card:hover::before {
+            opacity: 1;
+        }
+
+        .kpi-info h3 {
+            font-size: 0.8rem;
+            color: var(--clr-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .kpi-info p {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--clr-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        /* ── Search & Filter Panel ── */
+        .filter-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--clr-border);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--clr-text-muted);
+            pointer-events: none;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--clr-border);
+            border-radius: 12px;
+            padding: 12px 16px 12px 42px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .filter-select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--clr-border);
+            color: var(--clr-text);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 160px;
+        }
+
+        /* ── Transaction Table / List ── */
+        .logs-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--clr-border);
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .logs-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--clr-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logs-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(0,0,0,0.2);
+            padding: 16px 24px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--clr-text-muted);
+            border-bottom: 1px solid var(--clr-border);
+        }
+
+        td {
+            padding: 18px 24px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--clr-border);
+            vertical-align: middle;
+        }
+
+        tr {
+            transition: background 0.2s;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .email-cell {
+            font-weight: 500;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ip-badge {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--clr-border);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+        }
+
+        .model-chip {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .model-chip.pro {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #d8b4fe;
+        }
+
+        .model-chip.lite {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #a7f3d0;
+        }
+
+        .mode-badge {
+            font-size: 0.75rem;
+            color: var(--clr-text-muted);
+            background: rgba(255,255,255,0.03);
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--clr-border);
+            text-transform: capitalize;
+        }
+
+        /* ── Expandable Details Row ── */
+        .inspect-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .inspect-btn:hover {
+            color: #c084fc;
+        }
+
+        .details-row {
+            display: none;
+            background: rgba(0,0,0,0.25);
+        }
+
+        .details-content {
+            padding: 24px;
+            border-bottom: 1px solid var(--clr-border);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .details-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .q-box, .a-box {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--clr-border);
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .q-box h4, .a-box h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--clr-text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .q-text, .a-text {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-family: 'Fira Code', monospace;
+            max-height: 250px;
+            overflow-y: auto;
+            color: #e5e7eb;
+        }
+
+        .a-text {
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Access Validation Layer -->
+    <div id="auth-overlay">
+        <div class="auth-spinner" id="auth-spinner"></div>
+        <div id="denied-card">
+            <i data-lucide="shield-alert" style="width: 48px; height: 48px; color: var(--accent-danger); margin: 0 auto 16px;"></i>
+            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 12px; color: #fca5a5;">Administrative Access Denied</h2>
+            <p style="color: var(--clr-text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px;">
+                You are authenticated but do not hold the required permissions to view Assudani Developers security logs. Redirecting to home core...
+            </p>
+            <div style="font-size: 0.8rem; font-weight: 600; color: var(--accent);" id="redirect-countdown">Redirecting in 3s...</div>
+        </div>
+    </div>
+
+    <!-- Main Administrative wrapper -->
+    <div class="admin-wrapper">
+        <header>
+            <div class="brand-section">
+                <span class="brand-logo">Tiflo Admin <i data-lucide="shield-check" style="color:var(--accent-success)"></i></span>
+                <span class="role-badge">Security Hub</span>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn-action" onclick="fetchLogs()">
+                    <i data-lucide="refresh-cw" style="width:16px;height:16px;"></i> Refresh
+                </button>
+                <button class="btn-action" onclick="exportCSV()">
+                    <i data-lucide="download" style="width:16px;height:16px;"></i> Export CSV
+                </button>
+                <button class="btn-action btn-danger" onclick="window.location.href='/'">
+                    <i data-lucide="log-out" style="width:16px;height:16px;"></i> Exit Hub
+                </button>
+            </div>
+        </header>
+
+        <!-- Bento KPI Grid -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-info">
+                    <h3>Total Queries</h3>
+                    <p id="kpi-queries">0</p>
+                </div>
+                <div class="kpi-icon">
+                    <i data-lucide="message-square"></i>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-info">
+                    <h3>Unique Users</h3>
+                    <p id="kpi-users">0</p>
+                </div>
+                <div class="kpi-icon">
+                    <i data-lucide="users"></i>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-info">
+                    <h3>Pro model usage</h3>
+                    <p id="kpi-pro">0</p>
+                </div>
+                <div class="kpi-icon">
+                    <i data-lucide="zap"></i>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-info">
+                    <h3>Total Geolocations</h3>
+                    <p id="kpi-locations">0</p>
+                </div>
+                <div class="kpi-icon">
+                    <i data-lucide="globe"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Panel -->
+        <div class="filter-panel">
+            <div class="search-box">
+                <i data-lucide="search" style="width:18px;height:18px;"></i>
+                <input type="text" id="search-input" placeholder="Search by Email, IP, Location, or prompt..." oninput="applyFilters()">
+            </div>
+            
+            <select class="filter-select" id="model-filter" onchange="applyFilters()">
+                <option value="all">All Models</option>
+                <option value="lite">Tiflo Lite</option>
+                <option value="pro">Tiflo Pro</option>
+                <option value="vision">Tiflo Vision</option>
+            </select>
+
+            <select class="filter-select" id="mode-filter" onchange="applyFilters()">
+                <option value="all">All Modes</option>
+                <option value="default">Default</option>
+                <option value="teach">Teach</option>
+                <option value="backbencher">Backbencher</option>
+            </select>
+        </div>
+
+        <!-- Logs Container -->
+        <div class="logs-container">
+            <div class="logs-header">
+                <span class="logs-title">System Transaction Logs</span>
+                <span style="font-size:0.8rem; color:var(--clr-text-muted);" id="logs-count">Showing 0 rows</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Email</th>
+                            <th>IP Address</th>
+                            <th>Location</th>
+                            <th>Engine / Model</th>
+                            <th>AI Mode</th>
+                            <th>Timestamp</th>
+                            <th>Inspect</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-tbody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: var(--clr-text-muted);">
+                                Loading security logs...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://twenty-words-exist.loca.lt';
+        let rawLogs = [];
+        let filteredLogs = [];
+        let verifiedEmail = "";
+
+        // Clerk Auth Startup
+        async function startClerk() {
+            try {
+                await Clerk.load();
+                if (!Clerk.user) {
+                    // Redirect to login page
+                    window.location.href = '/?login=true';
+                    return;
+                }
+                
+                // Get verified email
+                const email = Clerk.user.primaryEmailAddress.emailAddress;
+                verifiedEmail = email;
+                
+                // CEO Validation Check
+                if (email === "piyushassudani96@gmail.com") {
+                    document.getElementById('auth-overlay').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('auth-overlay').style.display = 'none';
+                    }, 500);
+                    
+                    fetchLogs();
+                } else {
+                    // Access Denied Flow
+                    document.getElementById('auth-spinner').style.display = 'none';
+                    document.getElementById('denied-card').style.display = 'block';
+                    
+                    let seconds = 3;
+                    const interval = setInterval(() => {
+                        seconds--;
+                        document.getElementById('redirect-countdown').innerText = `Redirecting in ${seconds}s...`;
+                        if (seconds <= 0) {
+                            clearInterval(interval);
+                            window.location.href = '/';
+                        }
+                    }, 1000);
+                }
+            } catch (err) {
+                console.error("Clerk loading error:", err);
+            }
+        }
+
+        // Fetch logs from HF backend with verification header
+        async function fetchLogs() {
+            try {
+                const token = await Clerk.session?.getToken();
+                if (!token) {
+                    throw new Error('Missing Clerk session token');
+                }
+                const response = await fetch(`${API_BASE}/admin/chats`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Bypass-Tunnel-Reminder': 'true'
+                    }
+                });
+                const res = await response.json();
+                if (res.status === 'success' && res.chats) {
+                    rawLogs = res.chats;
+                    filteredLogs = [...rawLogs];
+                    renderKPIs();
+                    renderTable();
+                } else {
+                    alert("Failed to load logs. Server response: " + JSON.stringify(res));
+                }
+            } catch (err) {
+                console.error("Error fetching logs:", err);
+                alert("Connection error fetching logs.");
+            }
+        }
+
+        // Calculate and Render KPIs
+        function renderKPIs() {
+            document.getElementById('kpi-queries').innerText = rawLogs.length;
+            
+            const uniqueUsers = new Set(rawLogs.map(l => l.user_id)).size;
+            document.getElementById('kpi-users').innerText = uniqueUsers;
+            
+            const proUsage = rawLogs.filter(l => l.model === 'pro').length;
+            document.getElementById('kpi-pro').innerText = proUsage;
+            
+            const uniqueLocs = new Set(rawLogs.map(l => l.user_location).filter(loc => loc && loc !== 'unknown')).size;
+            document.getElementById('kpi-locations').innerText = uniqueLocs;
+        }
+
+        // Render logs data grid
+        function renderTable() {
+            const tbody = document.getElementById('logs-tbody');
+            document.getElementById('logs-count').innerText = `Showing ${filteredLogs.length} rows`;
+            
+            if (filteredLogs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--clr-text-muted);">
+                            No security records found matching filters.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = "";
+            filteredLogs.forEach((log, index) => {
+                const tr = document.createElement('tr');
+                
+                // Formatted timestamp
+                let displayTime = "Recent";
+                if (log.timestamp) {
+                    try {
+                        const date = new Date(log.timestamp);
+                        displayTime = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    } catch(e){}
+                }
+
+                const email = log.user_email || "guest";
+                const isGuest = email === 'guest';
+                const safeEmail = escapeHtml(email);
+                const safeIp = escapeHtml(log.user_ip || 'unknown');
+                const safeLocation = escapeHtml(log.user_location || 'unknown');
+                const safeModel = escapeHtml(log.model || 'lite');
+                const safeMode = escapeHtml(log.mode || 'default');
+                const safeDisplayTime = escapeHtml(displayTime);
+                const modelClass = /^[a-z0-9_-]+$/i.test(log.model || '') ? (log.model || 'lite') : 'lite';
+                const modeClass = /^[a-z0-9_-]+$/i.test(log.mode || '') ? (log.mode || 'default') : 'default';
+                
+                tr.innerHTML = `
+                    <td class="email-cell">
+                        <i data-lucide="${isGuest ? 'user' : 'mail'}" style="width:14px;height:14px;color:${isGuest ? '#9ca3af' : 'var(--accent)'}"></i>
+                        <span>${safeEmail}</span>
+                    </td>
+                    <td><span class="ip-badge">${safeIp}</span></td>
+                    <td><i data-lucide="map-pin" style="width:12px;height:12px;color:var(--clr-text-muted)"></i> ${safeLocation}</td>
+                    <td><span class="model-chip ${modelClass}">${safeModel}</span></td>
+                    <td><span class="mode-badge ${modeClass}">${safeMode}</span></td>
+                    <td><span style="font-size:0.75rem;color:var(--clr-text-muted)">${safeDisplayTime}</span></td>
+                    <td>
+                        <button class="inspect-btn" onclick="toggleDetails(${index})">
+                            <i data-lucide="eye" style="width:14px;height:14px"></i> View
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                // Expandable row block
+                const detTr = document.createElement('tr');
+                detTr.id = `details-${index}`;
+                detTr.className = "details-row";
+                detTr.innerHTML = `
+                    <td colspan="7">
+                        <div class="details-content">
+                            <div class="q-box">
+                                <h4><i data-lucide="corner-down-right" style="width:14px;height:14px"></i> User Prompt</h4>
+                                <div class="q-text">${escapeHtml(log.user_message || "")}</div>
+                            </div>
+                            <div class="a-box">
+                                <h4><i data-lucide="terminal" style="width:14px;height:14px"></i> Tiflo AI Response</h4>
+                                <div class="a-text">${escapeHtml(log.ai_response || "")}</div>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(detTr);
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Toggle Details Row
+        function toggleDetails(index) {
+            const el = document.getElementById(`details-${index}`);
+            if (el.style.display === "table-row") {
+                el.style.display = "none";
+            } else {
+                el.style.display = "table-row";
+            }
+        }
+
+        // Filtering Logic
+        function applyFilters() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const model = document.getElementById('model-filter').value;
+            const mode = document.getElementById('mode-filter').value;
+
+            filteredLogs = rawLogs.filter(log => {
+                const matchesQuery = 
+                    (log.user_email && log.user_email.toLowerCase().includes(query)) ||
+                    (log.user_ip && log.user_ip.toLowerCase().includes(query)) ||
+                    (log.user_location && log.user_location.toLowerCase().includes(query)) ||
+                    (log.user_message && log.user_message.toLowerCase().includes(query));
+                
+                const matchesModel = model === 'all' || log.model === model;
+                const matchesMode = mode === 'all' || log.mode === mode;
+
+                return matchesQuery && matchesModel && matchesMode;
+            });
+
+            renderTable();
+        }
+
+        // Export data to CSV
+        function exportCSV() {
+            let csv = "Email,IP Address,Location,Model,Mode,Timestamp,User Query,AI Response\n";
+            filteredLogs.forEach(log => {
+                const email = `"${(log.user_email || 'guest').replace(/"/g, '""')}"`;
+                const ip = `"${(log.user_ip || 'unknown').replace(/"/g, '""')}"`;
+                const loc = `"${(log.user_location || 'unknown').replace(/"/g, '""')}"`;
+                const model = `"${(log.model || 'lite').replace(/"/g, '""')}"`;
+                const mode = `"${(log.mode || 'default').replace(/"/g, '""')}"`;
+                const ts = `"${(log.timestamp || '').replace(/"/g, '""')}"`;
+                const q = `"${(log.user_message || '').replace(/"/g, '""')}"`;
+                const a = `"${(log.ai_response || '').replace(/"/g, '""')}"`;
+                csv += `${email},${ip},${loc},${model},${mode},${ts},${q},${a}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `tiflo_admin_logs_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Escape HTML helper
+        function escapeHtml(text) {
+            return String(text ?? '')
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

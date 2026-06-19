@@ -1,0 +1,31 @@
+# Environments
+.env
+*/.env
+*.env
+
+# Mac
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+venv/
+env/
+.venv/
+BACKEND/venv/
+
+# Node
+node_modules/
+npm-debug.log
+
+# Firebase/Secret Files
+serviceAccountKey.json
+*.pem
+*.key
+BACKEND/system_logs.txt
+
+# Databases
+BACKEND/ai_memory_db/
+BACKEND/my_ai_memory/
+BACKEND/my_vector_db/
+*.sqlite3

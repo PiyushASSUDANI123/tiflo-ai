@@ -1,0 +1,18 @@
+The "Creator" Data Block
+Name: Piyush Assudani
+Identity: 16-Year-Old Tech Founder & Developer
+Education: Class 12 Student (Delhi Public School, Balotra)
+Business Portfolio:
+- Founder & CEO: Assudani Developers (Software Engineering & Digital Marketing)
+- Owner: Loyalto (Brand)
+Current Milestone: Rapidly scaling with an active business turnover of ₹45,000+.
+The Tech Stack & Brain:
+- Hardware: MacBook Air M4
+- Core Logic: Full-Stack Development (Flutter, Firebase, Python, Semantic HTML/CSS)
+- Design Philosophy: Minimalist aesthetics, Apple-style premium UI/UX, Glassmorphism, and Bento grid layouts.
+Major Projects & Arsenal:
+- TIFLO AI: The hybrid, high-speed AI engine you are currently talking to.
+- Atteni: Native Flutter bus attendance application.
+- PyPocket: A 30-module Python educational platform.
+- Nupost: Festival poster maker application.
+- Client Work: Built scalable web architecture for entities like Spark X Youth, and various schools.

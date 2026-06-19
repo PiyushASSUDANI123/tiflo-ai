@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiflo AI - Upgrade & Buy Credits</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="image.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --clr-void: #0a0a0a;
+            --clr-carbon: #121212;
+            --clr-graphite: #1a1a1a;
+            --clr-text-primary: #f5f5f5;
+            --clr-text-secondary: #8c8c8c;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--clr-void);
+            color: var(--clr-text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background glows */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.07) 0%, transparent 60%);
+            top: -300px;
+            left: -200px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 60%);
+            bottom: -200px;
+            right: -100px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        header {
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+        }
+
+        .logo {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .back-btn {
+            color: var(--clr-text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #fff;
+        }
+
+        .pricing-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(135deg, #fff 0%, #a5a5a5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--clr-text-secondary);
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            width: 100%;
+            margin-bottom: 50px;
+        }
+
+        .plan-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--accent-glow);
+        }
+
+        .plan-card.popular {
+            border-color: rgba(99, 102, 241, 0.5);
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .plan-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--clr-text-secondary);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .currency {
+            font-size: 1.5rem;
+            color: var(--clr-text-secondary);
+        }
+
+        .plan-credits {
+            font-size: 1.2rem;
+            color: #a78bfa;
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 40px;
+            flex: 1;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            color: #d1d5db;
+            font-size: 0.95rem;
+        }
+
+        .feature-icon {
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .pay-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .plan-card.popular .pay-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .plan-card.popular .pay-btn:hover {
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .custom-plan {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .custom-plan p {
+            color: var(--clr-text-secondary);
+            font-size: 1rem;
+        }
+
+        .custom-plan a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .custom-plan a:hover {
+            color: #818cf8;
+            text-decoration: underline;
+        }
+
+        /* ─── RAZORPAY MODAL ─── */
+        .rzp-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .rzp-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .rzp-modal {
+            background: #fff;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .rzp-overlay.show .rzp-modal {
+            transform: translateY(0);
+        }
+
+        .rzp-header {
+            background: #02042b; /* Razorpay Blue/Dark */
+            padding: 20px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .rzp-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .rzp-close:hover {
+            color: #fff;
+        }
+
+        .rzp-merchant {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rzp-merchant-logo {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .rzp-merchant-info h3 {
+            font-size: 1.1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .rzp-merchant-info p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .rzp-amount-wrap {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rzp-amount-label {
+            color: #64748b;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .rzp-amount-value {
+            color: #0f172a;
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .rzp-body {
+            padding: 20px;
+            background: #fff;
+        }
+
+        .rzp-contact {
+            margin-bottom: 20px;
+        }
+
+        .rzp-contact label {
+            display: block;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .rzp-contact-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8f9fa;
+        }
+
+        .rzp-contact-icon {
+            color: #334155;
+            background: #e2e8f0;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .rzp-contact-details {
+            flex: 1;
+        }
+
+        .rzp-contact-phone {
+            color: #0f172a;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+        }
+
+        .rzp-contact-email {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .rzp-methods {
+            margin-bottom: 20px;
+        }
+
+        .rzp-method-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .rzp-method-btn:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .rzp-method-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #334155;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .rzp-footer {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .rzp-secured {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .rzp-secured svg {
+            color: #10b981;
+        }
+
+        /* ─── TOAST NOTIFICATION ─── */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: rgba(18, 18, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-left: 4px solid var(--accent);
+            padding: 16px 20px;
+            border-radius: 8px;
+            color: #fff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            color: #10b981;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .toast-content h4 {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .toast-content p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-title { font-size: 2.2rem; }
+            .plans-grid { grid-template-columns: 1fr; max-width: 400px; }
+            header { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">
+            <img src="image.png" alt="Tiflo AI Logo">
+            Tiflo AI
+        </a>
+        <a href="index.html" class="back-btn">
+            <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i>
+            Back to Chat
+        </a>
+    </header>
+
+    <div class="pricing-container">
+        <h1 class="page-title">Unlock Maximum Potential</h1>
+        <p class="page-subtitle">Get more credits to power your uncensored dual-engine queries.</p>
+
+        <div class="plans-grid">
+            
+            <!-- Basic Plan -->
+            <div class="plan-card">
+                <div class="plan-name">Basic</div>
+                <div class="plan-price"><span class="currency">₹</span>299</div>
+                <div class="plan-credits">
+                    <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
+                    25 Credits
+                </div>
+                <ul class="plan-features">
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> Access to Uncensored Engine</li>
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> Priority Processing</li>
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> Standard Support</li>
+                </ul>
+                <button class="pay-btn" onclick="openRazorpay(299, 25)">
+                    Buy Now
+                    <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+                </button>
+            </div>
+
+            <!-- Pro Plan (Popular) -->
+            <div class="plan-card popular">
+                <div class="popular-badge">Most Popular</div>
+                <div class="plan-name" style="color: #818cf8;">Pro</div>
+                <div class="plan-price"><span class="currency">₹</span>499</div>
+                <div class="plan-credits">
+                    <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
+                    69 Credits
+                </div>
+                <ul class="plan-features">
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> Access to Uncensored Engine</li>
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> High Priority Processing</li>
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> Premium Support</li>
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> Image Analysis Included</li>
+                </ul>
+                <button class="pay-btn" onclick="openRazorpay(499, 69)">
+                    Buy Pro
+                    <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+                </button>
+            </div>
+
+            <!-- Max Plan -->
+            <div class="plan-card">
+                <div class="plan-name">Max</div>
+                <div class="plan-price"><span class="currency">₹</span>799</div>
+                <div class="plan-credits">
+                    <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
+                    99 Credits
+                </div>
+                <ul class="plan-features">
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> Uncensored Engine</li>
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> Highest Priority</li>
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> 24/7 Dedicated Support</li>
+                    <li><i data-lucide="check-circle-2" class="feature-icon" style="width: 18px; height: 18px;"></i> All Features Unlocked</li>
+                </ul>
+                <button class="pay-btn" onclick="openRazorpay(799, 99)">
+                    Buy Max
+                    <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <div class="custom-plan">
+            <p>Need a custom plan for enterprise or bulk credits? <br> Contact us at <a href="mailto:hello@piyushassudani.site">hello@piyushassudani.site</a></p>
+        </div>
+    </div>
+
+    <!-- Fake Razorpay Modal -->
+    <div class="rzp-overlay" id="rzpOverlay">
+        <div class="rzp-modal">
+            <div class="rzp-header">
+                <div class="rzp-merchant">
+                    <img src="image.png" alt="Tiflo" class="rzp-merchant-logo">
+                    <div class="rzp-merchant-info">
+                        <h3>Assudani Group</h3>
+                        <p>Tiflo AI Credits</p>
+                    </div>
+                </div>
+                <button class="rzp-close" onclick="closeRazorpay()">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            
+            <div class="rzp-amount-wrap">
+                <span class="rzp-amount-label">Amount Payable</span>
+                <span class="rzp-amount-value" id="rzpAmount">₹0</span>
+            </div>
+
+            <div class="rzp-body">
+                <div class="rzp-contact">
+                    <label>Contact Details</label>
+                    <div class="rzp-contact-card">
+                        <div class="rzp-contact-icon">
+                            <i data-lucide="user" style="width: 24px; height: 24px;"></i>
+                        </div>
+                        <div class="rzp-contact-details">
+                            <div class="rzp-contact-phone" id="rzpName">Loading...</div>
+                            <div class="rzp-contact-email" id="rzpEmail">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rzp-methods">
+                    <button class="rzp-method-btn" onclick="processPayment()">
+                        <div class="rzp-method-left">
+                            <i data-lucide="credit-card" style="color: #8b5cf6;"></i>
+                            Card
+                        </div>
+                        <i data-lucide="chevron-right" style="color: #cbd5e1;"></i>
+                    </button>
+                    <button class="rzp-method-btn" onclick="processPayment()">
+                        <div class="rzp-method-left">
+                            <i data-lucide="smartphone" style="color: #10b981;"></i>
+                            UPI / QR
+                        </div>
+                        <i data-lucide="chevron-right" style="color: #cbd5e1;"></i>
+                    </button>
+                    <button class="rzp-method-btn" onclick="processPayment()">
+                        <div class="rzp-method-left">
+                            <i data-lucide="building" style="color: #f59e0b;"></i>
+                            Netbanking
+                        </div>
+                        <i data-lucide="chevron-right" style="color: #cbd5e1;"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="rzp-footer">
+                <div class="rzp-secured">
+                    <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i>
+                    Secured by Razorpay
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        let currentPlanCredits = 0;
+
+        function openRazorpay(price, credits) {
+            currentPlanCredits = credits;
+            
+            // Set amount
+            document.getElementById('rzpAmount').innerText = '₹' + price;
+            
+            // Fetch User Details from LocalStorage
+            const userName = localStorage.getItem('altair_user_name') || 'Guest User';
+            const userEmail = localStorage.getItem('altair_user_email') || 'guest@example.com';
+            
+            document.getElementById('rzpName').innerText = userName;
+            document.getElementById('rzpEmail').innerText = userEmail;
+
+            // Log intention to backend (Mock API Call as requested by user)
+            const userId = localStorage.getItem('altair_user_id') || 'guest';
+            console.log(`[Payment Intent] User: ${userId} (${userEmail}) initiated payment for ₹${price} (${credits} credits).`);
+            /*
+            fetch('/api/payment/intent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, amount: price, credits: credits })
+            });
+            */
+
+            // Show Modal
+            document.getElementById('rzpOverlay').classList.add('show');
+        }
+
+        function closeRazorpay() {
+            document.getElementById('rzpOverlay').classList.remove('show');
+        }
+
+        function processPayment() {
+            // Close modal
+            closeRazorpay();
+
+            // Capture the user who wanted to pay
+            const userId = localStorage.getItem('altair_user_id') || 'guest';
+            const userEmail = localStorage.getItem('altair_user_email') || 'guest@example.com';
+            
+            // Mock backend hit to give free credits
+            console.log(`[Payment Captured] User ${userEmail} clicked Pay. Initiating free credit drop...`);
+            /*
+            fetch('/api/payment/add-free-credits', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: userId })
+            }).then(res => res.json()).then(data => {
+                console.log("Credits added via API");
+            });
+            */
+
+            // Show beautiful toast message
+            showToast(
+                "Payment Unavailable", 
+                "Sorry we are unable to process now. We give you <strong>25 more credits for free!</strong> Enjoy and have a good day 🎉"
+            );
+        }
+
+        function showToast(title, message) {
+            const container = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i data-lucide="gift" style="width: 24px; height: 24px;"></i>
+                </div>
+                <div class="toast-content">
+                    <h4>${title}</h4>
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            lucide.createIcons({ root: toast });
+
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+
+            // Remove after 8 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 8000);
+        }
+    </script>
+</body>
+</html>

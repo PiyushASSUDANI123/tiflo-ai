@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions - Tiflo AI</title>
+    <link rel="icon" type="image/png" href="image.png">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --clr-void: #0a0a0a;
+            --clr-carbon: #0f0f0f;
+            --clr-border: rgba(255, 255, 255, 0.06);
+            --clr-text-primary: #f5f5f5;
+            --clr-text-secondary: #8c8c8c;
+            --accent: #6366f1;
+            --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+        body.light-mode {
+            --clr-void: #f8fafc;
+            --clr-carbon: #ffffff;
+            --clr-border: rgba(0, 0, 0, 0.08);
+            --clr-text-primary: #0f172a;
+            --clr-text-secondary: #475569;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body {
+            background-color: var(--clr-void);
+            color: var(--clr-text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .navbar {
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--clr-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--clr-carbon);
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--clr-text-primary);
+        }
+        .logo img { height: 32px; border-radius: 6px; }
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--clr-text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: var(--clr-text-primary); }
+        .content {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p { color: var(--clr-text-secondary); margin-bottom: 24px; font-size: 1.1rem; }
+        .section-box {
+            background: var(--clr-carbon);
+            border: 1px solid var(--clr-border);
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .section-box h3 { margin-bottom: 12px; color: var(--clr-text-primary); display: flex; align-items: center; gap: 10px; }
+        .section-box p { font-size: 0.95rem; margin-bottom: 0; }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid var(--clr-border);
+            color: var(--clr-text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        if (localStorage.getItem('altair_theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+    </script>
+    <div class="navbar">
+        <a href="index.html" class="logo">
+            <img src="image.png" alt="Tiflo AI"> Tiflo AI
+        </a>
+        <a href="index.html" class="back-btn">
+            <i data-lucide="arrow-left"></i> Back to Chat
+        </a>
+    </div>
+
+    <div class="content">
+        <h1>Terms & Conditions</h1>
+        <p>Welcome to Tiflo AI. By accessing and using our premium intelligence interface, you agree to the following terms, designed to ensure a seamless and powerful experience within the Assudani Group Ecosystem.</p>
+
+        <div class="section-box">
+            <h3><i data-lucide="zap"></i> 1. Absolute Intelligence Usage</h3>
+            <p>Tiflo AI provides cutting-edge generative intelligence. You agree to use this technology responsibly, ethically, and strictly within the bounds of applicable laws. Misuse or reverse-engineering of our proprietary models is strictly prohibited.</p>
+        </div>
+
+        <div class="section-box">
+            <h3><i data-lucide="fingerprint"></i> 2. Deep Synchronization</h3>
+            <p>To provide a hyper-personalized experience, Tiflo AI synchronizes deeply with your usage patterns. By using the service, you consent to our comprehensive context-gathering protocols designed to anticipate your needs.</p>
+        </div>
+
+        <div class="section-box">
+            <h3><i data-lucide="shield"></i> 3. User Responsibility</h3>
+            <p>You retain ownership of the data you provide, but you are solely responsible for the inputs and outputs generated. Tiflo AI and the Assudani Group are not liable for any strategic or operational decisions made based on AI output.</p>
+        </div>
+
+        <div class="section-box">
+            <h3><i data-lucide="globe"></i> 4. Assudani Group Ecosystem</h3>
+            <p>Your Tiflo AI account functions as a unified identity passport across all connected Assudani Group digital services. Modification or termination of this account may affect your access to sister platforms.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 Assudani Group. All rights reserved.
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
