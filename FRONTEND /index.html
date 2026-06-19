@@ -311,10 +311,17 @@
             z-index: 0;
         }
 
-        /* Markdown content styling */
+        /* Premium Typography & Spacing */
+        .message-content {
+            font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+            font-size: 1.05rem;
+            letter-spacing: 0.015em;
+        }
+
         .message-content p {
-            margin-bottom: 0.65em;
-            line-height: 1.75;
+            margin-bottom: 1.1em;
+            line-height: 1.8;
+            color: #d1d5db; /* Softer, premium gray */
         }
 
         .message-content p:last-child {
@@ -322,29 +329,31 @@
         }
 
         .message-content strong {
-            color: #e5e7eb;
+            color: #f3f4f6;
             font-weight: 600;
+            letter-spacing: 0.01em;
         }
 
         .message-content ul,
         .message-content ol {
-            padding-left: 1.5em;
-            margin-bottom: 0.75em;
+            padding-left: 1.8em;
+            margin-bottom: 1.2em;
         }
 
         .message-content li {
-            margin-bottom: 0.3em;
-            line-height: 1.7;
+            margin-bottom: 0.5em;
+            line-height: 1.75;
+            color: #d1d5db;
         }
 
         .message-content code {
-            background: rgba(99, 102, 241, 0.12);
-            padding: 2px 7px;
-            border-radius: 5px;
+            background: rgba(139, 92, 246, 0.12); /* Subtle purple glow */
+            padding: 3px 6px;
+            border-radius: 6px;
             font-family: 'JetBrains Mono', 'Courier New', monospace;
-            font-size: 0.84em;
-            color: #a78bfa;
-            border: 1px solid rgba(99, 102, 241, 0.15);
+            font-size: 0.85em;
+            color: #c4b5fd;
+            border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
         .message-content pre {
@@ -390,50 +399,68 @@
             border-radius: 0 8px 8px 0;
         }
 
-        /* GPT-style Code Blocks */
+        /* Premium GPT-style Code Blocks */
         .code-block-container {
-            margin: 16px 0;
-            border-radius: 10px;
+            margin: 20px 0;
+            border-radius: 12px;
             overflow: hidden;
-            border: 1px solid var(--glass-border);
-            background: #0d0d0d;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #09090b; /* Deep premium black */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            transition: border-color 0.2s ease;
         }
+        
+        .code-block-container:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
         .code-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 16px;
-            background: #1e1e1e;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 10px 16px;
+            background: #18181b; /* Subtle contrast */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
+
         .code-lang {
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            font-weight: 600;
-            color: var(--clr-text-secondary);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #9ca3af;
             font-family: 'JetBrains Mono', monospace;
         }
+
         .copy-code-btn {
-            background: none;
-            border: none;
-            color: var(--clr-text-secondary);
-            font-size: 0.72rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #d1d5db;
+            font-size: 0.75rem;
+            font-weight: 500;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.15s ease;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .copy-code-btn:hover {
-            color: var(--clr-text-primary);
-            background: rgba(255,255,255,0.05);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
         }
+        
         .message-content pre {
             margin: 0 !important;
             border: none !important;
             border-radius: 0 !important;
+            padding: 18px 16px !important;
+            font-size: 0.9em;
+            line-height: 1.6;
         }
 
         /* Avatar Pulse during stream */

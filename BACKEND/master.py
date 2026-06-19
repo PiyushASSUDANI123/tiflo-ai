@@ -210,6 +210,7 @@ RESPONSE FORMAT:
 1. One short title line.
 2. One ```html``` code block with the final component.
 3. Up to 3 concise bullets for customization hooks only if genuinely useful.
+4. ALWAYS end your response with a related follow-up question (e.g., "Should I add interactivity to this block?").
 """
 
     if intent == "COLD_OUTREACH":
