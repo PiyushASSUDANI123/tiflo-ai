@@ -165,11 +165,10 @@ def _require_identity(request: Request, claimed_user_id: str = "", claimed_user_
         claimed_user_id,
         claimed_user_name,
     )
+    # If not authenticated but has a claimed ID, we allow it as a guest
     if not identity.is_authenticated:
-        raise HTTPException(
-            status_code=401,
-            detail="Firebase login required. Send a Firebase ID token in Authorization: Bearer <token>.",
-        )
+        identity.user_id = claimed_user_id or "guest"
+        identity.user_name = claimed_user_name or "Guest User"
     return identity
 
 
