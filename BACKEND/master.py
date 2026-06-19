@@ -736,7 +736,7 @@ HOW TO RESPOND TO IMPOSTERS:
             messages.insert(0, active_prompt)
             
         payload = {
-            "model": "cognitivecomputations/dolphin3.0-r1-mistral-24b:free",
+            "model": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
             "messages": messages,
             "stream": True,
             "temperature": 0.8
