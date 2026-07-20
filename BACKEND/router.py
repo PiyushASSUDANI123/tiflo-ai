@@ -443,7 +443,8 @@ INTENT DEFINITIONS — Read carefully before classifying:
 
 2. WEB_SEARCH:
    - For real-time / live information that changes daily: breaking news, live scores, today's stock prices, current events.
-   - CRITICAL: Use WEB_SEARCH for ANY factual question about specific people, celebrities, places, events, or things that require highly accurate or historical facts. Do NOT hallucinate facts about people.
+   - CRITICAL: Use WEB_SEARCH for ANY factual question about specific people, celebrities, places, events, or things that require highly accurate or historical facts.
+   - If the user asks a factual question that might require external knowledge (like "what is X" or "tell me about Y" where Y is not a general coding concept), choose WEB_SEARCH to ensure accuracy.
 
 3. AGENT:
    - ONLY for explicit tool use: executing code, calculating a math expression, checking live crypto/stock price, real-time weather.
