@@ -751,7 +751,7 @@ HOW TO RESPOND TO IMPOSTERS:
             "X-Title": "Tiflo AI"
         }
         
-        messages = conversation_history[:-1] + [{'role': 'user', 'content': user_input}]
+        messages = conversation_history + [{'role': 'user', 'content': user_input}]
         if messages[0]['role'] != 'system':
             messages.insert(0, active_prompt)
             
@@ -842,7 +842,7 @@ HOW TO RESPOND TO IMPOSTERS:
         if RAG_ENABLED and len(user_input.strip()) > 5:
             rag_context = await asyncio.to_thread(get_recent_context, user_id=user_id, limit=20)
 
-        messages = conversation_history[:-1] + [{'role': 'user', 'content': user_input}]
+        messages = conversation_history + [{'role': 'user', 'content': user_input}]
         if messages[0]['role'] != 'system': messages.insert(0, active_prompt)
 
         if rag_context:
@@ -979,7 +979,7 @@ HOW TO RESPOND TO IMPOSTERS:
         if company_context:
             augmented_input = f"{user_input}\n\n[OFFICIAL LOCAL KNOWLEDGE BASE]:\n{company_context}"
 
-        messages = conversation_history[:-1] + [{'role': 'user', 'content': augmented_input}]
+        messages = conversation_history + [{'role': 'user', 'content': augmented_input}]
         if messages[0]['role'] != 'system': messages.insert(0, active_prompt)
 
         stream = groq_client.chat.completions.create(
@@ -1004,7 +1004,7 @@ HOW TO RESPOND TO IMPOSTERS:
             yield chunk
 
     elif intent in SPECIALTY_TEMPERATURES:
-        messages = conversation_history[:-1] + [{'role': 'user', 'content': user_input}]
+        messages = conversation_history + [{'role': 'user', 'content': user_input}]
         if messages[0]['role'] != 'system':
             messages.insert(0, active_prompt)
 
