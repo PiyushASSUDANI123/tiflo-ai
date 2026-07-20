@@ -29,3 +29,7 @@ BACKEND/ai_memory_db/
 BACKEND/my_ai_memory/
 BACKEND/my_vector_db/
 *.sqlite3
+
+# Frontend
+frontend_react/
+FRONTEND /
