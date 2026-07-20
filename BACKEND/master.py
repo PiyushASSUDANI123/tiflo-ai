@@ -844,18 +844,15 @@ HOW TO RESPOND TO IMPOSTERS:
 
         messages = conversation_history + [{'role': 'user', 'content': user_input}]
         if messages[0]['role'] != 'system': messages.insert(0, active_prompt)
+        messages[0] = {'role': 'system', 'content': messages[0]['content']}
 
         if rag_context:
-            rag_system_block = {
-                'role': 'system',
-                'content': (
-                    "[BACKGROUND CONTEXT FROM PAST CONVERSATIONS]\n"
-                    f"{rag_context}\n"
-                    "WARNING: This is background memory only! Do NOT answer this block directly. "
-                    "Only answer the very last user message."
-                )
-            }
-            messages.insert(-1, rag_system_block)
+            messages[0]['content'] += (
+                "\n\n[BACKGROUND CONTEXT FROM PAST CONVERSATIONS]\n"
+                f"{rag_context}\n"
+                "WARNING: This is background memory only! Do NOT answer this block directly. "
+                "Only answer the very last user message."
+            )
 
         # ── Anti-Repetition Injection ──────────────────────────────────────────
         # Collect last 3 AI responses from history so LLM knows what NOT to repeat
@@ -864,47 +861,35 @@ HOW TO RESPOND TO IMPOSTERS:
             if m.get('role') == 'assistant'
         ][-3:]
         if prev_ai_responses:
-            anti_repeat_block = {
-                'role': 'system',
-                'content': (
-                    "[ANTI-REPETITION ENFORCEMENT]: Your previous responses in this conversation were:\n"
-                    + "\n---\n".join(f'"{r[:300]}"' for r in prev_ai_responses)
-                    + "\n\nYou MUST NOT repeat, paraphrase, or structurally copy any of the above. "
-                    "Generate a completely FRESH, DIFFERENT response now."
-                )
-            }
-            # Insert just before the last user message
-            messages.insert(-1, anti_repeat_block)
+            messages[0]['content'] += (
+                "\n\n[ANTI-REPETITION ENFORCEMENT]: Your previous responses in this conversation were:\n"
+                + "\n---\n".join(f'"{r[:300]}"' for r in prev_ai_responses)
+                + "\n\nYou MUST NOT repeat, paraphrase, or structurally copy any of the above. "
+                "Generate a completely FRESH, DIFFERENT response now."
+            )
 
         # ── Dynamic Temperature + Prompt based on query type ─────────────────
         if _is_technical(user_input):
             # Technical / Code / Math → low temp for precision, strict tone
             chat_temperature = 0.2
-            tone_hint = {
-                'role': 'system',
-                'content': (
-                    "[QUERY TYPE: TECHNICAL]\n"
-                    "The user is asking a technical, code, or math question. "
-                    "Switch to PRECISION MODE: be surgically accurate, structured, and direct. "
-                    "Prioritize correctness over style. Use code blocks, exact syntax, and numbered steps. "
-                    "Do NOT add casual filler — get straight to the solution."
-                )
-            }
+            messages[0]['content'] += (
+                "\n\n[QUERY TYPE: TECHNICAL]\n"
+                "The user is asking a technical, code, or math question. "
+                "Switch to PRECISION MODE: be surgically accurate, structured, and direct. "
+                "Prioritize correctness over style. Use code blocks, exact syntax, and numbered steps. "
+                "Do NOT add casual filler — get straight to the solution."
+            )
         else:
             # Casual / Conversational → high temp for personality, dost-mode
             chat_temperature = 1.0
-            tone_hint = {
-                'role': 'system',
-                'content': (
-                    "[QUERY TYPE: CASUAL]\n"
-                    "The user is being casual or conversational. "
-                    "Switch to FRIEND MODE: be chill, witty, and natural. "
-                    "Match their vibe — if they're funny, be funnier. If they're brief, be brief. "
-                    "Ask a natural follow-up question to keep the conversation alive. "
-                    "Talk like a real dost, not a textbook."
-                )
-            }
-        messages.insert(-1, tone_hint)
+            messages[0]['content'] += (
+                "\n\n[QUERY TYPE: CASUAL]\n"
+                "The user is being casual or conversational. "
+                "Switch to FRIEND MODE: be chill, witty, and natural. "
+                "Match their vibe — if they're funny, be funnier. If they're brief, be brief. "
+                "Ask a natural follow-up question to keep the conversation alive. "
+                "Talk like a real dost, not a textbook."
+            )
 
         stream = groq_client.chat.completions.create(
             model=GROQ_MODEL,
@@ -1007,28 +992,21 @@ HOW TO RESPOND TO IMPOSTERS:
         messages = conversation_history + [{'role': 'user', 'content': user_input}]
         if messages[0]['role'] != 'system':
             messages.insert(0, active_prompt)
-
-        specialty_hint = {
-            'role': 'system',
-            'content': _build_specialty_system_prompt(intent),
-        }
-        messages.insert(-1, specialty_hint)
+        messages[0] = {'role': 'system', 'content': messages[0]['content']}
+        
+        messages[0]['content'] += f"\n\n{_build_specialty_system_prompt(intent)}"
 
         prev_ai_responses = [
             m['content'] for m in conversation_history
             if m.get('role') == 'assistant'
         ][-3:]
         if prev_ai_responses:
-            anti_repeat_block = {
-                'role': 'system',
-                'content': (
-                    "[ANTI-REPETITION ENFORCEMENT]: Your previous responses in this conversation were:\n"
-                    + "\n---\n".join(f'"{r[:300]}"' for r in prev_ai_responses)
-                    + "\n\nYou MUST NOT repeat, paraphrase, or structurally copy any of the above. "
-                    "Generate a fresh, stronger version that still follows the current specialty mode."
-                )
-            }
-            messages.insert(-1, anti_repeat_block)
+            messages[0]['content'] += (
+                "\n\n[ANTI-REPETITION ENFORCEMENT]: Your previous responses in this conversation were:\n"
+                + "\n---\n".join(f'"{r[:300]}"' for r in prev_ai_responses)
+                + "\n\nYou MUST NOT repeat, paraphrase, or structurally copy any of the above. "
+                "Generate a fresh, stronger version that still follows the current specialty mode."
+            )
 
         status_text = SPECIALTY_STATUS.get(intent)
         if status_text:

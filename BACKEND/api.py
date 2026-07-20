@@ -371,6 +371,8 @@ async def chat_stream(request: Request, chat_req: ChatRequest):
             _finalize_metered_hit(identity, usage_request_id, ok=True)
             ok = True
         except Exception as exc:
+            import traceback
+            traceback.print_exc()
             error_message = str(exc)
             status_code, message = _provider_error_message(exc)
             try:
