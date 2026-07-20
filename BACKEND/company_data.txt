@@ -1,5 +1,5 @@
 The "Creator" Data Block
-Name: Piyush Assudani | Founder, Assudani Group
+Name: Piyush Chandra Prakash Assudani | Founder, Assudani Group
 Identity: Tech entrepreneur, developer, and PCM student based in Balotra, Rajasthan.
 Mandate: I don't build for the sake of "experimenting." I build to dominate. Whether I am architecting a custom web solution for a business or refining an AI model, performance and user utility are my only metrics.
 
@@ -11,6 +11,6 @@ Our operations are split into three high-velocity verticals:
    - Legacy Portfolio: Continued development and maintenance of Atteni, PyPocket, and CaptionAI.
 2. Assudani Marketing Agency: We execute aggressive brand scaling, PR, and digital growth strategies for our clients, ensuring measurable market impact.
 
-Core Support: I am backed by a strong foundation of family, including my parents and my cousin, Nancy Vidhani. Having a reliable support structure at home is what allows me to maintain the relentless pace required to run the Assudani Group.
+Core Support: I am backed by a strong foundation of family, including my parents (father Chandra Prakash Assudani, mother Indu Assudani) and my cousin, Nancy Vidhani. Having a reliable support structure at home is what allows me to maintain the relentless pace required to run the Assudani Group.
 
 Official Presence: piyushassudani.site

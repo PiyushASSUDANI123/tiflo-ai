@@ -20,10 +20,10 @@ TIFLO_CORE_KNOWLEDGE = [
     "Tiflo AI was built to serve as the primary AI interface for The Assudani Group and its clients.",
 
     # About Piyush
-    "Piyush Assudani is a tech entrepreneur, developer, and PCM student based in Balotra, Rajasthan. He is the Founder of the Assudani Group.",
-    "Piyush Assudani builds products that scale. His core focus lies in Kotlin/Android development and full-stack web architecture (Firebase/JS).",
-    "Piyush Assudani's tech stack and launches include: Tiflo AI, Perfect Bandhan, and a Legacy Portfolio (Atteni, PyPocket, CaptionAI).",
-    "Piyush Assudani is backed by a strong foundation of family, including his parents and his cousin, Nancy Vidhani.",
+    "Piyush Chandra Prakash Assudani is a tech entrepreneur, developer, and PCM student based in Balotra, Rajasthan. He is the Founder of the Assudani Group.",
+    "Piyush Chandra Prakash Assudani builds products that scale. His core focus lies in Kotlin/Android development and full-stack web architecture (Firebase/JS).",
+    "Piyush Chandra Prakash Assudani's tech stack and launches include: Tiflo AI, Perfect Bandhan, and a Legacy Portfolio (Atteni, PyPocket, CaptionAI).",
+    "Piyush Chandra Prakash Assudani is backed by a strong foundation of family, including his parents (father Chandra Prakash Assudani, mother Indu Assudani) and his cousin, Nancy Vidhani.",
 
     # The Assudani Group
     "The Assudani Group / Assudani Developers is a tech agency specializing in scalable Flutter applications, dynamic web platforms, and AI-powered products. Founded and led by Piyush Assudani.",
