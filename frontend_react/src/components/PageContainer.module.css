@@ -1,0 +1,44 @@
+.container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  background: var(--clr-void);
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 24px;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.content h2 {
+  font-size: 1.5rem;
+  margin: 32px 0 16px;
+  color: var(--clr-text-primary);
+}
+
+.content p {
+  color: var(--clr-text-secondary);
+  line-height: 1.7;
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+}
+
+.glassCard {
+  background: var(--glass-panel);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+}

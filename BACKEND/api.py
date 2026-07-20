@@ -26,29 +26,18 @@ import time
 import os
 import json
 from dotenv import load_dotenv
-from slowapi import Limiter
 from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
 
 load_dotenv()
 
 # Initialize Rate Limiter
-limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(title="TIFLO AI CORE")
-app.state.limiter = limiter
 initialize_credit_store()
 recovered_hits = release_stuck_hits()
 if recovered_hits:
     print(f"♻️ Recovered {recovered_hits} stale in-progress credit hit(s).")
 
 # Rate limit exception handler - security first!
-@app.exception_handler(RateLimitExceeded)
-async def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded):
-    print("🚨 [SECURITY RATE LIMIT] Rate limit triggered for remote address:", get_remote_address(request))
-    return JSONResponse(
-        status_code=429,
-        content={"error": "Speed kam kar bhai, Tiflo AI thak raha hai."}
-    )
 
 def _build_allowed_origins() -> list[str]:
     default_origins = [
@@ -146,17 +135,16 @@ def _validate_history_payload(history: list):
 
 
 def _account_event_payload(snapshot: dict) -> str:
-    return "data: __ACCOUNT__:" + json.dumps(snapshot, ensure_ascii=False) + "\n\n"
+    # Firebase suspended — emit nothing to clients
+    return ""
 
 
 def _build_charge_headers(snapshot: dict) -> dict:
-    headers = {
-        "X-Auth-Provider": "firebase",
-        "X-Unlimited-Access": "true" if snapshot.get("unlimited_access") else "false",
+    return {
+        "X-Auth-Provider": "none",
+        "X-Unlimited-Access": "true",
+        "X-Credits-Remaining": "unlimited",
     }
-    remaining = snapshot.get("remaining_credits")
-    headers["X-Credits-Remaining"] = "unlimited" if remaining is None else str(remaining)
-    return headers
 
 
 def _require_identity(request: Request, claimed_user_id: str = "", claimed_user_name: str = "") -> VerifiedIdentity:
@@ -165,37 +153,35 @@ def _require_identity(request: Request, claimed_user_id: str = "", claimed_user_
         claimed_user_id,
         claimed_user_name,
     )
-    # If not authenticated but has a claimed ID, we allow it as a guest
     if not identity.is_authenticated:
         identity.user_id = claimed_user_id or "guest"
         identity.user_name = claimed_user_name or "Guest User"
     return identity
 
 
+_DUMMY_SNAPSHOT = {
+    "user_id": "guest",
+    "email": "",
+    "display_name": "Guest User",
+    "remaining_credits": None,
+    "unlimited_access": True,
+    "is_guest": True,
+}
+
+
 def _ensure_account_for_identity(identity: VerifiedIdentity) -> dict:
-    snapshot = ensure_user_account(identity.user_id, identity.user_email, identity.user_name)
-    return snapshot.to_dict()
+    # Firebase suspended — return dummy snapshot
+    return _DUMMY_SNAPSHOT
 
 
 def _claim_metered_hit(identity: VerifiedIdentity, route: str) -> tuple[str, dict]:
-    try:
-        request_id, snapshot = claim_hit(identity.user_id, identity.user_email, identity.user_name, route)
-        return request_id, snapshot.to_dict()
-    except ConcurrentHitError:
-        raise HTTPException(
-            status_code=409,
-            detail="Ek hi user ek time par sirf ek active hit chala sakta hai. Current request complete hone do.",
-        )
-    except InsufficientCreditsError:
-        raise HTTPException(
-            status_code=402,
-            detail="Credits khatam ho gaye. Top-up ya payment ke baad phir se try karo.",
-        )
+    # Firebase suspended — no metering, return dummy
+    return "no-op", _DUMMY_SNAPSHOT
 
 
 def _finalize_metered_hit(identity: VerifiedIdentity, request_id: str, ok: bool, error_message: str = "") -> dict:
-    snapshot = finish_hit(identity.user_id, request_id, ok=ok, error_message=error_message)
-    return snapshot.to_dict()
+    # Firebase suspended — return dummy snapshot
+    return _DUMMY_SNAPSHOT
 
 
 def _provider_error_message(exc: Exception) -> tuple[int, str]:
@@ -289,7 +275,6 @@ def _payload_indicates_failed_run(payload: str) -> bool:
 
 
 @app.post("/chat/stream")
-@limiter.limit("100/minute")
 async def chat_stream(request: Request, chat_req: ChatRequest):
     _validate_chat_request(chat_req)
     effective_use_openrouter = chat_req.use_openrouter or chat_req.mode == "uncensored"
@@ -413,7 +398,6 @@ async def chat_stream(request: Request, chat_req: ChatRequest):
 
 # Legacy non-streaming endpoint (fallback)
 @app.post("/chat")
-@limiter.limit("60/minute")
 async def chat(request: Request, payload: ChatRequest):
     _validate_chat_request(payload)
     identity = _require_identity(request, payload.user_id, payload.user_name)
@@ -487,7 +471,6 @@ async def chat(request: Request, payload: ChatRequest):
 
 
 @app.get("/auth/firebase-config")
-@limiter.limit("120/minute")
 async def auth_firebase_config(request: Request):
     return {
         "provider": "firebase",
@@ -498,7 +481,6 @@ async def auth_firebase_config(request: Request):
 
 
 @app.get("/auth/me")
-@limiter.limit("120/minute")
 async def auth_me(request: Request):
     identity = _require_identity(request)
     account = _ensure_account_for_identity(identity)
@@ -518,7 +500,6 @@ async def auth_me(request: Request):
 
 
 @app.post("/payments/razorpay/order")
-@limiter.limit("30/minute")
 async def razorpay_order(request: Request, payload: RazorpayOrderRequest):
     identity = _require_identity(request, payload.user_id)
     placeholder = create_razorpay_placeholder_order(
@@ -582,7 +563,6 @@ async def health():
 
 
 @app.post("/analyze/url")
-@limiter.limit("30/minute")
 async def analyze_url_endpoint(request: Request, payload: UrlAnalysisRequest):
     identity = _require_identity(request, payload.user_id)
     usage_request_id, account_snapshot = _claim_metered_hit(identity, "/analyze/url")
@@ -643,7 +623,6 @@ async def analyze_url_endpoint(request: Request, payload: UrlAnalysisRequest):
 
 
 @app.post("/analyze/image")
-@limiter.limit("30/minute")
 async def analyze_image_upload(
     request: Request,
     file: UploadFile = File(...),
@@ -750,7 +729,6 @@ class MemoryExtractRequest(BaseModel):
     current_facts: list = Field(default_factory=list)
 
 @app.post("/memory/extract")
-@limiter.limit("60/minute")
 async def extract_memory(request: Request, payload: MemoryExtractRequest):
     import json
     from groq import Groq
@@ -839,7 +817,6 @@ async def stats():
 
 
 @app.post("/voice/transcribe")
-@limiter.limit("30/minute")
 async def voice_transcribe(request: Request, file: UploadFile = File(...)):
     """
     Receives raw wav audio from browser Web Audio API and transcribes it in real-time
@@ -866,7 +843,6 @@ async def voice_transcribe(request: Request, file: UploadFile = File(...)):
 
 
 @app.post("/chat/feedback")
-@limiter.limit("60/minute")
 async def chat_feedback(request: Request, req: FeedbackRequest):
     print(f"📥 [FEEDBACK] Type: {req.feedback_type} | User: {req.user_id} | Text: {req.feedback_text[:50]}...")
     loop = asyncio.get_running_loop()
@@ -876,7 +852,6 @@ async def chat_feedback(request: Request, req: FeedbackRequest):
 
 
 @app.post("/chat/share")
-@limiter.limit("20/minute")
 async def chat_share(request: Request, req: ShareChatRequest):
     print(f"📥 [SHARE CHAT] Creating public link for '{req.title}' ({len(req.messages)} msgs)...")
     try:
@@ -888,7 +863,6 @@ async def chat_share(request: Request, req: ShareChatRequest):
 
 
 @app.get("/chat/share/{shared_id}")
-@limiter.limit("60/minute")
 async def chat_share_get(request: Request, shared_id: str):
     print(f"📤 [SHARE CHAT] Fetching public link '{shared_id}'...")
     try:
@@ -905,7 +879,6 @@ async def chat_share_get(request: Request, shared_id: str):
 
 
 @app.get("/admin/chats")
-@limiter.limit("20/minute")
 async def admin_chats_get(request: Request):
     identity = _require_identity(request)
     if not identity.is_founder:

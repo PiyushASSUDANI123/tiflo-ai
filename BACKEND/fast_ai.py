@@ -154,7 +154,17 @@ async def ask_live_ai_parallel(question: str, search_query: str):
         6,
     )
     if not search_results:
-        yield {"text": "❌ Could not retrieve live web results right now.", "sources": []}
+        yield {"status": "Fallback to internal knowledge..."}
+        try:
+            fallback_response = _groq.chat.completions.create(
+                model=_GROQ_MODEL,
+                messages=[{"role": "system", "content": "You are TIFLO AI. Answer the user directly."}, {"role": "user", "content": question}],
+                temperature=0.7,
+            )
+            ai_text = fallback_response.choices[0].message.content
+            yield {"text": ai_text, "sources": []}
+        except Exception as e:
+            yield {"text": f"❌ Could not retrieve live results. Fallback failed: {e}", "sources": []}
         return
 
     snippet_context = extract_ddgs_snippets(search_results)

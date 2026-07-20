@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tiflo-ai.piyushassudani.in/sitemap.xml

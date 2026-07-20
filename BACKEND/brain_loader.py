@@ -20,9 +20,10 @@ TIFLO_CORE_KNOWLEDGE = [
     "Tiflo AI was built to serve as the primary AI interface for The Assudani Group and its clients.",
 
     # About Piyush
-    "Piyush Assudani is a 16-year-old tech entrepreneur and the CEO of Assudani Developers and The Assudani Group. He studies in Class 12 at Delhi Public School, Balotra, Rajasthan.",
-    "Piyush Assudani's tech stack includes: MacBook Air M4, Python, FastAPI, Flutter, Firebase, HTML, CSS, JavaScript. He specializes in building premium web and mobile applications.",
-    "Piyush Assudani's projects include: Atteni (bus attendance app), Nupost (festival poster maker), PyPocket (Python IDE), Tiflo AI, Loyalto, Rainbow E-Smart School portal, SparxYouth platform.",
+    "Piyush Assudani is a tech entrepreneur, developer, and PCM student based in Balotra, Rajasthan. He is the Founder of the Assudani Group.",
+    "Piyush Assudani builds products that scale. His core focus lies in Kotlin/Android development and full-stack web architecture (Firebase/JS).",
+    "Piyush Assudani's tech stack and launches include: Tiflo AI, Perfect Bandhan, and a Legacy Portfolio (Atteni, PyPocket, CaptionAI).",
+    "Piyush Assudani is backed by a strong foundation of family, including his parents and his cousin, Nancy Vidhani.",
 
     # The Assudani Group
     "The Assudani Group / Assudani Developers is a tech agency specializing in scalable Flutter applications, dynamic web platforms, and AI-powered products. Founded and led by Piyush Assudani.",

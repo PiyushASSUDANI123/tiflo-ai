@@ -1,0 +1,148 @@
+/* ═══ Header ═══ */
+.header {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.leftControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconBtn {
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  transition: all 0.18s ease;
+}
+
+.iconBtn:hover {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── UNCENSORED toggle ── */
+.uncensoredToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+  padding: 5px 14px 5px 8px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.uncensoredToggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.uncensoredActive {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+.uncensoredActive .toggleLabel {
+  color: #fca5a5 !important;
+}
+
+.toggleLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.38);
+  letter-spacing: 0.08em;
+  transition: color 0.22s ease;
+}
+
+/* mini toggle switch */
+.toggleSwitch {
+  width: 28px;
+  height: 16px;
+  background: #3f3f46;
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.22s ease;
+  flex-shrink: 0;
+}
+
+.toggleOn {
+  background: #ef4444;
+}
+
+.toggleThumb {
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.22s ease;
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(12px);
+}
+
+/* ── Right action icons ── */
+.rightControls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.actionIcon {
+  color: rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  transition: all 0.18s ease;
+}
+
+.actionIcon:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.recordIcon {
+  color: #f87171;
+}
+
+.recordIcon:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+.terminalIcon {
+  color: rgba(139, 92, 246, 0.7);
+}
+
+.terminalIcon:hover {
+  color: #a78bfa;
+  background: rgba(139, 92, 246, 0.1) !important;
+}
+
+.terminalActive {
+  color: #a78bfa !important;
+  background: rgba(139, 92, 246, 0.15) !important;
+}
+
+.trashIcon:hover {
+  color: #f87171 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+}
