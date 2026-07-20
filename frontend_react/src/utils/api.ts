@@ -1,4 +1,4 @@
-export const API_BASE = 'https://tiflo-ai.piyushassudani.in';
+export const API_BASE = 'https://api.tiflo.piyushassudani.site';
 
 export const sendChatMessage = async (
   message: string, 
