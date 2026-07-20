@@ -451,6 +451,7 @@ INTENT DEFINITIONS — Read carefully before classifying:
 
 4. LOCAL_DB:
    - Questions specifically about Piyush Assudani, Assudani Group, Tiflo AI's own features/team/history.
+   - EXCEPTION: If the user explicitly asks to "search the web", "use crawlers", or find something "deep online" about these topics, route to WEB_SEARCH instead.
 
 5. URL_ANALYSIS:
    - ONLY when the user provides a URL AND asks something about its content.
